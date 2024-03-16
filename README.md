@@ -1,8 +1,7 @@
 ## Setup
-This is a django application. To start with the web application, run the following command to download all dependencies
+This is a django application. To start the web application:
 ```
 cd admin-app
-pip3 install -r requirements.txt
 ```
 
 ## Run on Docker
@@ -12,7 +11,10 @@ docker-compose up d
 ```
 
 ## Run on Local Server
-You can run the application locally by running the following command. No endpoints are currently available for testing.
+
+Run the following commands on terminal in order:
 ```
+# Make sure Python version is 3.10
+pip3 install -r requirements.txt
 python3 manage.py runserver
 ```

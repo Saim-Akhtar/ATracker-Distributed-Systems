@@ -7,7 +7,7 @@ cd admin-app
 ## Run on Docker
 Make sure your docker is running. Run the following command on terminal to start the app
 ```
-docker-compose up d
+docker-compose up -d
 ```
 
 ## Run on Local Server

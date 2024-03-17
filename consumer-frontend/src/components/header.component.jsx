@@ -27,13 +27,12 @@ function Header({ isLoggedIn, setParcelData }) {
       
       console.log('Tracking ID: ', trackingid);
       if(trackingid === '') { return; }
-      
+
       const response = await axios.post('http://localhost:8083/fetchData', 
       {trackingid}, 
       { headers: { token: localStorage.getItem('token') } }
     );
     
-
       setParcelData(response.data.response);
       // console.log(response.data.response);
       // const data = response.data.response;

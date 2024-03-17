@@ -119,7 +119,6 @@ app.post('/login', async (req, res) => {
     }
 });
 
-
 app.post('/fetchData', async (req, res) => {
     const token = req.body.token || req.headers.token;
 
@@ -128,36 +127,21 @@ app.post('/fetchData', async (req, res) => {
         return res.status(401).send({ message: 'No token provided.' });
     }
 
+    console.log("Tracker: ", process.env.SECRET_KEY);
+    try {
+        let url = `http://localhost:8000/tracker/${req.body?.trackingid}`;
 
-    let resp = parcelData;
-
-    console.log('Data: ', resp);
-    res.send({ response: resp });
-    // try {
-    //     //Fetch Data from admin-backend
-    //    const response = await axios.get('http://localhost:8080/validate-token', {
-    //        headers: {token}
-    //     });
-        
-    //     console.log("Tracker: ", parcelData);
-    //     if(response) {
-    //         //2bcb3ae617
-    //         let url = `http://localhost:8000/tracker/${req.body?.trackingid}`;
-
-    //         // const data =  axios.get(url, {
-    //         //     headers: {
-    //         //         Accept: '/',
-    //         //         'X-Security-Key': 'hpJ7HMatA0por9YNS5gnPZBmOYLqAcye'
-    //         //     }
-    //         // })
-
-            
-    //         res.send({ message: 'Data fetched successfully' }, response.data);
-    //     }
+        const response =  axios.get(url, {
+            headers: {
+                Accept: '/',
+                'X-Security-Key': process.env.SECURITY_KEY
+            }
+        })
+        res.status(200).json({ message: 'Data fetched successfully', data: response.data });
     
-    // } catch (error) {
-    //     res.status(400).send(error);
-    // }
+    } catch (error) {
+        res.send(error);
+    }
 });
 
 const port = process.env.PORT || 3000;

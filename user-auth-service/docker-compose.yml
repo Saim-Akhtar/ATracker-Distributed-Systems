@@ -1,5 +1,20 @@
 version: '3.8'
 services:
+  app:
+    container_name: user-auth-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DB_URI=mongodb://mongo:27017/mydatabase
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+      
   mongodb:
     image: mongo:latest
     container_name: mongodb

@@ -4,8 +4,11 @@ const mongoose = require('mongoose');
 const User = require('./src/models/user.model');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
+const cors = require('cors');
 
 const app = express();
+app.use(cors());
+
 app.use(express.json());
 
 async function connectToDB() {
@@ -25,20 +28,22 @@ connectToDB();
 
 app.post('/register', async (req, res) => {
     try {
-        await connectToDB();
+        //await connectToDB();
         const { username, email, password } = req.body;
         const userExists = await User.findOne({ email : email });
 
         if (userExists) {
-            return res.status(400).send({ message: 'User already exists' });
+            console.log('User already exists');
+            return res.send({status: 409, message: 'User already exists' });
         }
         const user = new User({ username, email, password });
         await user.save();
 
         
-        res.status(201).send({ message: 'User registered successfully' });
+        res.send({status: 200, message: 'User registered successfully' });
     } catch (error) {
-        res.status(400).send(error);
+        // console.log('Error: ', error);
+        res.send(error);
     }
 });
 
@@ -50,12 +55,14 @@ app.post('/login', async (req, res) => {
         console.log('password', password);
 
         const user = await User.findOne({ email });
+
+        console.log('user: ', user);
         if (!user || !(await user.comparePassword(password))) {
             return res.status(401).send({ message: 'Login failed! Check authentication credentials' });
         }
         console.log('user: ', user);
         
-        const uuid = uuidv4();
+        const uuid = uuidv4(); // Generate a new UUID for the token version
 
         console.log('uuid: ', uuid);
         const token = jwt.sign({

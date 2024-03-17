@@ -2,7 +2,6 @@ require('dotenv').config();
 const cors = require('cors');
 const express = require('express');
 const mongoose = require('mongoose');
-
 const { default: axios } = require('axios');
 
 const app = express();
@@ -23,6 +22,73 @@ async function connectToDB() {
 
 connectToDB();
 
+
+const parcelData = {
+    "id": 1,
+    "tracking_id": "2bcb3ae617",
+    "user_email": "test@test.com",
+    "detail": "charger",
+    "created_at": "2024-03-17 14:18:25",
+    "departure": "Oulu, Finland",
+    "destination": "Talin, Estonia",
+    "actions": [
+      {
+        "model": "tracker_app.action",
+        "pk": 2,
+        "fields": {
+          "status": "Pending",
+          "location": "Oulu, Finland",
+          "action_performed": "Parcel created",
+          "comments": "",
+          "parcel": 1
+        }
+      },
+      {
+        "model": "tracker_app.action",
+        "pk": 3,
+        "fields": {
+          "status": "In Transit",
+          "location": "Oulu, Finland",
+          "action_performed": "Parcel dispatched",
+          "comments": "Heading to Helsinki",
+          "parcel": 1
+        }
+      },
+      {
+        "model": "tracker_app.action",
+        "pk": 4,
+        "fields": {
+          "status": "In Transit",
+          "location": "Helsinki, Finland",
+          "action_performed": "Parcel arrived",
+          "comments": "Awaiting next transport to Estonia",
+          "parcel": 1
+        }
+      },
+      {
+        "model": "tracker_app.action",
+        "pk": 5,
+        "fields": {
+          "status": "In Transit",
+          "location": "Tallinn, Estonia",
+          "action_performed": "Parcel arrived",
+          "comments": "Clearing customs",
+          "parcel": 1
+        }
+      },
+      {
+        "model": "tracker_app.action",
+        "pk": 6,
+        "fields": {
+          "status": "Delivered",
+          "location": "Tallinn, Estonia",
+          "action_performed": "Parcel delivered",
+          "comments": "Delivered to recipient",
+          "parcel": 1
+        }
+      }
+    ]
+  }
 
 app.post('/register', async (req, res) => {
     try {
@@ -55,24 +121,43 @@ app.post('/login', async (req, res) => {
 
 
 app.post('/fetchData', async (req, res) => {
-    const token = req.body.token || req.headers.authorization?.split(' ')[1];
+    const token = req.body.token || req.headers.token;
 
     if (!token) {
+        console.log('No token provided');
         return res.status(401).send({ message: 'No token provided.' });
     }
-    try {
-        //Fetch Data from admin-backend
-       const response = await axios.get('http://localhost:3000/validate-token', {
-           headers: {token}
-        });
+
+
+    let resp = parcelData;
+
+    console.log('Data: ', resp);
+    res.send({ response: resp });
+    // try {
+    //     //Fetch Data from admin-backend
+    //    const response = await axios.get('http://localhost:8080/validate-token', {
+    //        headers: {token}
+    //     });
         
-        if(response) {
-            res.send({ message: 'Data fetched successfully' }, response.data);
-        }
+    //     console.log("Tracker: ", parcelData);
+    //     if(response) {
+    //         //2bcb3ae617
+    //         let url = `http://localhost:8000/tracker/${req.body?.trackingid}`;
+
+    //         // const data =  axios.get(url, {
+    //         //     headers: {
+    //         //         Accept: '/',
+    //         //         'X-Security-Key': 'hpJ7HMatA0por9YNS5gnPZBmOYLqAcye'
+    //         //     }
+    //         // })
+
+            
+    //         res.send({ message: 'Data fetched successfully' }, response.data);
+    //     }
     
-    } catch (error) {
-        res.status(400).send(error);
-    }
+    // } catch (error) {
+    //     res.status(400).send(error);
+    // }
 });
 
 const port = process.env.PORT || 3000;

@@ -56,7 +56,7 @@ app.post('/login', async (req, res) => {
 
         const user = await User.findOne({ email });
 
-        console.log('user: ', user);
+        console.log('user: ', user); 
         if (!user || !(await user.comparePassword(password))) {
             return res.status(401).send({ message: 'Login failed! Check authentication credentials' });
         }
@@ -68,7 +68,7 @@ app.post('/login', async (req, res) => {
         const token = jwt.sign({
             _id: user._id,
             tokenVersion: uuid
-        }, process.env.JWT_SECRET, { expiresIn: '30m' });
+        }, process.env.JWT_SECRET, { expiresIn: '2h' });
         
         user.tokenVersion = uuid;
         await user.save();
@@ -82,6 +82,7 @@ app.post('/login', async (req, res) => {
 });
 
 app.post('/validate-token', async (req, res) => {
+    console.log('Validating token');
     // Expecting the token to be sent in the request body or as a header
     const token = req.body.token || req.headers.authorization?.split(' ')[1];
 

@@ -1,10 +1,12 @@
 import axios from 'axios';
+
 import React from 'react';
 import { Navbar, Nav, Form, FormControl, Button, Container } from 'react-bootstrap';
 // Import Link from react-router-dom
 import { Link } from 'react-router-dom';
 
-function Header({ isLoggedIn }) {
+function Header({ isLoggedIn, setParcelData }) {
+  const [trackingid, setTrackingId] = React.useState('');
 
   const handleLogout = () => {
     // Clear the token from localStorage
@@ -12,20 +14,36 @@ function Header({ isLoggedIn }) {
     // Set the logged-in state to false
     window.location.href = '/login';
   }
-  const handleSearch = async(trackingid) => {
-    // Replace with your API endpoint
-    await axios.post('http://localhost:8000/fetchData', {trackingid});
-    console.log(response);
-    const data = response.data.response;
-    if(data.status === 409) {
-      setError(data.message);
-    }
-    else {
-      // Redirect to login page if signup is successful
-      alert('Signup successful');
-      window.location.href = '/login';
-    }
+
+  const handleSearchForm = (e) => {
+    e.preventDefault();
+    setTrackingId(e.target.value);
+
+   
   }
+  const handleSearch = async() => {
+    // Replace with your API endpoint
+    try {
+      
+      console.log('Tracking ID: ', trackingid);
+      if(trackingid === '') { return; }
+      
+      const response = await axios.post('http://localhost:8083/fetchData', 
+      {trackingid}, 
+      { headers: { token: localStorage.getItem('token') } }
+    );
+    
+
+      setParcelData(response.data.response);
+      // console.log(response.data.response);
+      // const data = response.data.response;
+      
+      } catch (error) {
+        
+      }
+  }
+
+  console.log('Tracking ID: ', trackingid);
   return (
     <Navbar bg="light" expand="lg">
       <Container fluid>
@@ -39,8 +57,10 @@ function Header({ isLoggedIn }) {
               placeholder="Search"
               className="me-2"
               aria-label="Search"
+              value={trackingid}
+              onChange={(e) => handleSearchForm(e)}
             />
-            <Button variant="outline-success">Search</Button>
+            <Button variant="outline-success" onClick={handleSearch}>Search</Button>
           </Form>
           {isLoggedIn ? (
             // Wrap the button with Link for Logout

@@ -1,0 +1,40 @@
+.tracking-container {
+    max-width: 600px;
+    margin: auto;
+  }
+  
+  .timeline {
+    position: relative;
+    padding: 20px;
+    list-style: none;
+  }
+  
+  .timeline-item {
+    margin-bottom: 20px;
+    padding-left: 20px;
+  }
+  
+  .timeline-dot {
+    position: absolute;
+    left: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #333;
+  }
+  
+  .timeline-date {
+    margin-bottom: 5px;
+    font-size: 0.9em;
+    font-weight: bold;
+  }
+  
+  .timeline-content h3 {
+    margin-top: 0;
+    font-size: 1.2em;
+  }
+  
+  .timeline-content p {
+    margin-bottom: 0;
+  }
+  

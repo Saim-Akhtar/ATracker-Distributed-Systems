@@ -3,16 +3,16 @@
 Install Docker by following this link basd on your OS: https://docs.docker.com/engine/install/
 
 ## Run on Docker
+
+### Consumer Backend
 Make sure your docker is running. Run the following command on terminal to start the app
 ```
-docker-compose up -d
+cd admin-app
+docker stack deploy -c docker-compose.yaml admin
 ```
 
-## Run on Local Server
-
-Run the following commands on terminal in order:
+### Admin App
 ```
-# Make sure Python version is 3.10
-pip3 install -r requirements.txt
-python3 manage.py runserver
+cd consumer-backend
+docker stack deploy -c docker-compose.yml consumer
 ```

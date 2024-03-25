@@ -1,8 +1,6 @@
 ## Setup
-This is a django application. To start the web application:
-```
-cd admin-app
-```
+
+Install Docker by following this link basd on your OS: https://docs.docker.com/engine/install/
 
 ## Run on Docker
 Make sure your docker is running. Run the following command on terminal to start the app

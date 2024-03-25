@@ -3,16 +3,14 @@ version: '3'
 services:
   web:
     image: shafinsaleem/pkgtracker-ds:admin-v1
-    build:
-      context: .
-      dockerfile: Dockerfile
     volumes:
       - admin-data:/data
     ports:
-      - "8080:8080"
+      - "8000:8000"
     environment:
       PYTHONDONTWRITEBYTECODE: 1
       PYTHONUNBUFFERED: 1
+      SECRET_KEY: hpJ7HMatA0por9YNS5gnPZBmOYLqAcye
     deploy:
       replicas: 3
       restart_policy:

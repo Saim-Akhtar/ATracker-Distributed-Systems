@@ -33,8 +33,8 @@ function Header({ isLoggedIn, setParcelData }) {
       { headers: { token: localStorage.getItem('token') } }
     );
     
-      setParcelData(response.data.response);
-      // console.log(response.data.response);
+      setParcelData(response.data.data);
+      console.log(response.data.data);
       // const data = response.data.response;
       
       } catch (error) {

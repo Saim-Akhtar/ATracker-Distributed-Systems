@@ -128,20 +128,36 @@ app.post('/fetchData', async (req, res) => {
     }
 
     console.log("Tracker: ", process.env.SECRET_KEY);
-    try {
-        let url = `http://localhost:8000/tracker/${req.body?.trackingid}`;
-
-        const response =  axios.get(url, {
-            headers: {
-                Accept: '/',
-                'X-Security-Key': process.env.SECURITY_KEY
-            }
-        })
-        res.status(200).json({ message: 'Data fetched successfully', data: response.data });
     
-    } catch (error) {
-        res.send(error);
-    }
+    try {
+
+      console.log('Fetching data', req.body?.trackingid);
+      let url = `http://127.0.0.1:8000/tracker/${req.body?.trackingid}`;
+  
+
+      const response = await fetch(url, {
+        headers: {
+          Accept: '/',
+          'X-Security-Key': 'hpJ7HMatA0por9YNS5gnPZBmOYLqAcye'
+
+      }
+    });
+      // const response = await axios.get(url, {
+      //     headers: {
+      //         Accept: '/',
+      //         'X-Security-Key': process.env.SECURITY_KEY
+      //     }
+      // });
+  
+      const data = await response.json();
+      console.log('response: ', data);
+      res.status(200).json({ message: 'Data fetched successfully', data: data });
+  
+  } catch (error) {
+      console.error(error);
+      res.status(500).send(error);
+  }
+  
 });
 
 const port = process.env.PORT || 3000;

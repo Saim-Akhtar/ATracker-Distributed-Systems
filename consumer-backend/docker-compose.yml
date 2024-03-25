@@ -1,15 +1,100 @@
 version: '3.8'
+
 services:
-  mongodb:
+  app:
+    image: shafinsaleem/pkgtracker-ds:consumer-v1
+    ports:
+      - "9090:8080"
+    environment:
+      DATABASE_URL: mongodb://rootuser:rootpass@mongo1:27017,mongo2:27018,mongo3:27019/mydatabase?replicaSet=rs0&authSource=admin
+      DB_HOST: mongo1
+      DB_PORT: 27017
+      DB_USERNAME: rootuser
+      DB_PASSWORD: rootpass
+      DB_NAME: comsumerDB
+    volumes:
+      - consumer-data:/data
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+        delay: 2s
+        max_attempts: 2
+        window: 5s
+    depends_on:
+      - mongo1
+      - mongo2
+      - mongo3
+
+  mongo1:
     image: mongo:latest
-    container_name: mongodb
     ports:
       - "27017:27017"
+    volumes:
+      - mongo-data1:/data/db
+      - ./mongodb-keyfile:/etc/mongo/mongodb-keyfile
     environment:
       MONGO_INITDB_ROOT_USERNAME: rootuser
       MONGO_INITDB_ROOT_PASSWORD: rootpass
       MONGO_INITDB_DATABASE: comsumerDB
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--auth", "--keyFile", "/etc/mongo/mongodb-keyfile"]
+
+  mongo2:
+    image: mongo:latest
+    ports:
+      - "27018:27017"
     volumes:
-      - mongodb_data_container:/data/db
+      - mongo-data2:/data/db
+      - ./mongodb-keyfile:/etc/mongo/mongodb-keyfile
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: rootuser
+      MONGO_INITDB_ROOT_PASSWORD: rootpass
+      MONGO_INITDB_DATABASE: comsumerDB
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--auth", "--keyFile", "/etc/mongo/mongodb-keyfile"]
+  mongo3:
+    image: mongo:latest
+    ports:
+      - "27019:27017"
+    volumes:
+      - mongo-data3:/data/db
+      - ./mongodb-keyfile:/etc/mongo/mongodb-keyfile
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: rootuser
+      MONGO_INITDB_ROOT_PASSWORD: rootpass
+      MONGO_INITDB_DATABASE: comsumerDB
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--auth", "--keyFile", "/etc/mongo/mongodb-keyfile"]
+
+  mongo-initiator:
+    image: mongo:latest
+    depends_on:
+      - mongo1
+      - mongo2
+      - mongo3
+    volumes:
+      - ./mongo-init.js:/mongo-init.js:ro
+    entrypoint: ["/bin/bash", "-c"]
+    command: >
+      "sleep 20 &&
+      mongosh mongodb://rootuser:rootpass@mongo1:27017/admin --file /mongo-init.js"
+    deploy:
+      restart_policy:
+        condition: none
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "81:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - app
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
 volumes:
-  mongodb_data_container:
+  consumer-data:
+  mongo-data1:
+  mongo-data2:
+  mongo-data3:
